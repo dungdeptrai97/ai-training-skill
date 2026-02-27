@@ -1,0 +1,364 @@
+{
+  "skill_name": "vn-stock-screener",
+  "version": "v5",
+  "evals": [
+    {
+      "id": 1,
+      "name": "basic-pe-filter",
+      "prompt": "Lọc giúp tôi cổ phiếu có P/E dưới 10",
+      "expected_output": "Bảng cổ phiếu có P/E < 10, sắp xếp theo P/E tăng dần, có cột: mã, tên, ngành, giá, P/E",
+      "difficulty": "easy",
+      "assertions": [
+        "Output chứa bảng có ít nhất cột: ticker, P/E",
+        "Tất cả P/E trong kết quả < 10",
+        "Tự động loại P/E < 0 (doanh nghiệp lỗ)",
+        "Kết quả sort theo P/E tăng dần (smart sort)",
+        "Có compact funnel",
+        "Có dòng benchmark TB ngành/thị trường"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "multi-criteria-value",
+      "prompt": "Tìm cổ phiếu giá trị: P/E < 12, ROE > 15%, nợ thấp, có trả cổ tức",
+      "expected_output": "Bảng cổ phiếu thỏa mãn tất cả điều kiện, sort theo composite rank, có benchmark ngành",
+      "difficulty": "medium",
+      "assertions": [
+        "Tất cả kết quả thỏa: P/E < 12 AND ROE > 15%",
+        "Có compact funnel",
+        "D/E được dùng làm proxy cho 'nợ thấp' (Nhóm B → dịch NLP)",
+        "Dividend yield > 0 cho điều kiện 'có trả cổ tức'",
+        "Sort theo composite rank, KHÔNG sort theo ticker A-Z",
+        "Có dòng TB ngành cuối bảng"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "vague-request",
+      "prompt": "Cổ phiếu nào đáng mua bây giờ?",
+      "expected_output": "Claude KHÔNG trả lời trực tiếp mà hỏi lại chiến lược đầu tư, đề xuất các chiến lược có sẵn bao gồm cả lọc theo sự kiện",
+      "difficulty": "medium",
+      "assertions": [
+        "Không đưa kết quả trực tiếp cho câu hỏi mơ hồ",
+        "Hỏi lại hoặc đề xuất chiến lược cụ thể",
+        "Liệt kê ít nhất 5 chiến lược bao gồm cả Event-driven",
+        "Không có khuyến nghị mua/bán"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "sector-specific-banking",
+      "prompt": "Lọc cổ phiếu ngân hàng có NIM > 3.5% và tỷ lệ nợ xấu dưới 2%",
+      "expected_output": "Kết quả lọc ngành ngân hàng với chỉ số đặc thù ngành, thông báo gọn nếu thiếu dữ liệu",
+      "difficulty": "hard",
+      "assertions": [
+        "Nhận diện đây là yêu cầu ngành ngân hàng đặc thù",
+        "Sử dụng NIM và NPL thay vì P/E, D/E thông thường",
+        "Nếu dữ liệu không có NIM/NPL, thông báo gọn 1 dòng + đề xuất thay thế",
+        "Không áp dụng D/E hay current ratio cho ngân hàng"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "technical-momentum",
+      "prompt": "Tìm cổ phiếu vừa golden cross (MA50 cắt lên MA200) trong tuần qua, volume tăng",
+      "expected_output": "Danh sách cổ phiếu có golden cross gần đây kèm xác nhận volume",
+      "difficulty": "hard",
+      "assertions": [
+        "Giải thích golden cross là gì",
+        "Tính MA50 và MA200 đúng cách",
+        "Kiểm tra cross xảy ra trong 5 phiên gần nhất",
+        "Xác nhận volume > trung bình"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "empty-result-handling",
+      "prompt": "Lọc cổ phiếu P/E < 3, ROE > 30%, dividend yield > 10%, trên sàn HOSE",
+      "expected_output": "Kết quả rỗng. Claude dùng Relaxation Waterfall nới từng tiêu chí và hiển thị compact",
+      "difficulty": "medium",
+      "assertions": [
+        "Nhận ra điều kiện quá khắt khe",
+        "Thông báo 0 kết quả",
+        "Relaxation Waterfall: nới từng tiêu chí, show mỗi cái giải phóng bao nhiêu mã",
+        "Đề xuất nới lỏng cụ thể: tiêu chí nào nên nới trước"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "combined-fundamental-technical",
+      "prompt": "Lọc cổ phiếu vốn hóa trên 5000 tỷ, ROE > 15%, đang ở vùng quá bán (RSI < 30)",
+      "expected_output": "Kết hợp cả lọc cơ bản và kỹ thuật, compact funnel, giải thích ý nghĩa",
+      "difficulty": "medium",
+      "assertions": [
+        "Áp dụng cả bộ lọc fundamental và technical",
+        "Market cap > 5000 tỷ AND ROE > 15% AND RSI < 30",
+        "Giải thích ý nghĩa: cổ phiếu chất lượng đang bị bán quá mức",
+        "Compact funnel + smart sort",
+        "Có risk flag nếu mã nào có dấu hiệu bất thường"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "natural-language-complex",
+      "prompt": "Tôi muốn tìm cổ phiếu công nghệ tăng trưởng mạnh, chưa quá đắt, thanh khoản tốt",
+      "expected_output": "Claude dịch NLP → chạy luôn → giải thích logic kèm kết quả → gợi ý điều chỉnh",
+      "difficulty": "hard",
+      "assertions": [
+        "Dịch 'công nghệ' → lọc ngành CNTT/Viễn thông",
+        "Dịch 'tăng trưởng mạnh' → EPS growth > 20%",
+        "Dịch 'chưa quá đắt' → P/E < 18 hoặc < TB ngành",
+        "Dịch 'thanh khoản tốt' → volume TB > 500K",
+        "Chạy luôn KHÔNG hỏi xác nhận, giải thích logic kèm kết quả",
+        "Gợi ý điều chỉnh: 'nới P/E lên < 25, thêm ROE > 15%'"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "data-quality-outliers",
+      "prompt": "Lọc cổ phiếu P/E < 10, ROE > 15% trên HOSE",
+      "expected_output": "Kết quả KHÔNG chứa mã bị cảnh báo/kiểm soát, flag outlier (P/E đột biến, ROE bất thường), flag thanh khoản thấp",
+      "difficulty": "hard",
+      "assertions": [
+        "Tự động loại hoặc flag mã bị cảnh báo/kiểm soát/hạn chế giao dịch nếu dữ liệu có cột trạng thái",
+        "Flag P/E rất thấp (< 3) kèm ghi chú: 'P/E đột biến — có thể do lợi nhuận 1 lần, cần kiểm tra'",
+        "Flag ROE bất thường (> 50% hoặc < -100%) kèm ghi chú",
+        "Flag mã có thanh khoản thấp (volume TB < 50K cp/phiên): '⚠️ Thanh khoản thấp — khó mua bán'",
+        "Mã mới lên sàn < 6 tháng được ghi chú: 'IPO gần đây — dữ liệu lịch sử hạn chế'"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "event-dividend-bonus",
+      "prompt": "Tìm cổ phiếu sắp chia cổ tức tiền mặt hoặc chia cổ phiếu thưởng trong 30 ngày tới",
+      "expected_output": "Danh sách mã có sự kiện chia cổ tức/thưởng sắp tới, sort theo ngày sự kiện, phân biệt loại sự kiện",
+      "difficulty": "hard",
+      "assertions": [
+        "Nhận diện đây là yêu cầu lọc theo SỰ KIỆN, không phải lọc fundamental/technical",
+        "Phân loại đúng: cổ tức tiền mặt vs cổ phiếu thưởng vs cổ tức bằng cổ phiếu",
+        "Sort theo ngày GDKHQ hoặc ngày chốt quyền (gần nhất trước)",
+        "Hiển thị: mã, tên, loại sự kiện, tỷ lệ/giá trị, ngày chốt, ngày GDKHQ",
+        "Ghi chú: 'Giá thường điều chỉnh giảm sau ngày GDKHQ'",
+        "Nếu thiếu dữ liệu sự kiện → thông báo gọn + đề xuất nguồn dữ liệu bổ sung"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "event-insider-strategic-partner",
+      "prompt": "Tìm cổ phiếu có insider đang mua ròng mạnh, hoặc có đối tác chiến lược lớn vừa góp vốn",
+      "expected_output": "Danh sách mã có insider buying + mã có sự kiện đối tác chiến lược, phân biệt rõ 2 nhóm, giải thích ý nghĩa",
+      "difficulty": "hard",
+      "assertions": [
+        "Nhận diện 2 loại sự kiện: (1) insider buying và (2) đối tác chiến lược",
+        "Insider: hiển thị ai mua (Chủ tịch/CEO/thành viên HĐQT), số lượng, % so với vốn",
+        "Đối tác chiến lược: hiển thị đối tác là ai, % sở hữu, loại giao dịch (mua cổ phần/phát hành riêng lẻ)",
+        "Giải thích ý nghĩa: 'Insider mua ròng thường là tín hiệu tích cực — ban lãnh đạo tin vào triển vọng DN'",
+        "Giải thích: 'Đối tác chiến lược lớn góp vốn → nâng cao uy tín, mở rộng thị trường, chuyển giao công nghệ'",
+        "Nếu thiếu dữ liệu → hướng dẫn nguồn: 'Dữ liệu insider trading có trên HOSE (cbtt.vsd.vn), SSI, VNDirect'"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "event-fund-accumulation",
+      "prompt": "Cổ phiếu nào đang được nhiều quỹ đầu tư mua vào gần đây?",
+      "expected_output": "Danh sách mã được quỹ mua ròng, phân biệt quỹ nội/ngoại, giải thích ý nghĩa dòng vốn quỹ",
+      "difficulty": "hard",
+      "assertions": [
+        "Nhận diện yêu cầu lọc theo dòng vốn quỹ đầu tư (Nhóm B → dịch NLP)",
+        "Dịch 'nhiều quỹ mua vào' → lọc theo: foreign flow, ETF flow, fund ownership change",
+        "Phân biệt: (1) quỹ ngoại (Dragon Capital, VinaCapital...) vs (2) quỹ nội vs (3) ETF (VFM VN30, DCVFM...)",
+        "Hiển thị: mã, tên, giá trị mua ròng quỹ (30 ngày), số lượng quỹ nắm giữ, % room ngoại còn lại",
+        "Giải thích: 'Quỹ lớn mua vào = smart money đang tích lũy, thường là tín hiệu trung-dài hạn'",
+        "Nếu thiếu dữ liệu → ghi gọn: '⚠️ Cần dữ liệu foreign flow / fund holdings. Nguồn: SSI iBoard, VNDirect, FiinPro'"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "macro-commodity-benefit",
+      "prompt": "Giá thép thế giới đang tăng mạnh, cổ phiếu nào hưởng lợi?",
+      "expected_output": "Danh sách mã ngành thép/vật liệu xây dựng hưởng lợi từ giá thép tăng, giải thích chuỗi tác động, phân biệt mức độ hưởng lợi",
+      "difficulty": "hard",
+      "assertions": [
+        "Nhận diện đây là yêu cầu lọc theo MACRO/COMMODITY (Nhóm D — Event-driven)",
+        "Xác định đúng ngành hưởng lợi: thép (HPG, HSG, NKG, TLH...), tôn mạ (HSG, NKG), ống thép (HPG, HSG)",
+        "Phân biệt mức độ: (1) hưởng lợi trực tiếp (sản xuất thép) vs (2) gián tiếp (thương mại thép) vs (3) bất lợi (dùng thép làm đầu vào: xây dựng, ô tô)",
+        "Giải thích chuỗi tác động: 'Giá thép HRC tăng → biên LN sản xuất mở rộng → EPS cải thiện → P/E hiện tại hấp dẫn hơn'",
+        "Hiển thị kèm chỉ số: mã, tên, % doanh thu từ thép, P/E, EPS growth gần nhất",
+        "Ghi chú rủi ro: 'Giá thép tăng có thể chỉ là ngắn hạn — cần theo dõi giá HRC, giá quặng sắt, chính sách Trung Quốc'"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "macro-positive-news-sector",
+      "prompt": "Chính phủ vừa tăng đầu tư công mạnh, cổ phiếu nào hưởng lợi? Lọc kèm ROE > 12% và thanh khoản tốt",
+      "expected_output": "Danh sách mã ngành hưởng lợi từ đầu tư công, kết hợp lọc fundamental, giải thích chuỗi hưởng lợi theo thứ tự ưu tiên",
+      "difficulty": "hard",
+      "assertions": [
+        "Nhận diện kết hợp: (1) macro catalyst + (2) fundamental filter",
+        "Xác định ngành hưởng lợi theo CHUỖI GIÁ TRỊ: xây dựng/hạ tầng → thép/xi măng/VLXD → vận tải/logistics → ngân hàng (giải ngân vốn) → bất động sản (hạ tầng kết nối)",
+        "Phân loại: hưởng lợi trực tiếp (CTD, HHV, C69...) vs gián tiếp (HPG, HT1, BCC...)",
+        "Áp dụng thêm fundamental: ROE > 12% AND volume TB > 500K",
+        "Sort theo composite: mức hưởng lợi × chất lượng tài chính",
+        "Ghi chú timeline: 'Đầu tư công thường tác động rõ nhất từ quý giải ngân — theo dõi số liệu giải ngân hàng tháng'"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "combined-event-fundamental",
+      "prompt": "Tìm cổ phiếu vừa có sự kiện tích cực (insider mua, quỹ mua, đối tác chiến lược) VÀ tài chính tốt (ROE > 15%, tăng trưởng dương)",
+      "expected_output": "Kết hợp lọc event + fundamental, ưu tiên mã có nhiều catalyst cùng lúc, hiển thị rõ từng catalyst",
+      "difficulty": "hard",
+      "assertions": [
+        "Kết hợp 2 tầng: (1) lọc event trước → (2) lọc fundamental sau",
+        "Hiển thị cột catalyst: liệt kê sự kiện tích cực cho từng mã (insider/quỹ/đối tác)",
+        "Mã có NHIỀU catalyst cùng lúc được ưu tiên (sort theo số catalyst giảm dần)",
+        "Fundamental: ROE > 15% AND EPS growth > 0%",
+        "Compact funnel cho thấy: X mã có event → Y mã qua fundamental → Z mã cuối cùng",
+        "Ghi chú: 'Sự kiện tích cực + tài chính vững = xác suất thành công cao hơn, nhưng không đảm bảo'"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "nlp-event-vague",
+      "prompt": "Cổ phiếu nào đang có tin tốt gần đây?",
+      "expected_output": "Nhóm B/C: dịch 'tin tốt' → các loại sự kiện tích cực, chạy lọc hoặc hỏi lại nếu quá mơ hồ",
+      "difficulty": "medium",
+      "assertions": [
+        "Dịch 'tin tốt' → mapping: insider buying, quỹ mua ròng, đối tác chiến lược, cổ tức cao, KQKD vượt kỳ vọng, giá hàng hóa thuận lợi",
+        "KHÔNG đưa danh sách random — phải hỏi lại HOẶC phân loại rồi chạy",
+        "Nếu hỏi lại: đề xuất các loại 'tin tốt' cụ thể để user chọn",
+        "Nếu chạy luôn (Nhóm B): giải thích logic dịch + chạy đa sự kiện + sort theo mức tác động",
+        "Không khuyến nghị mua/bán"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "breakout-detection",
+      "prompt": "Tìm cổ phiếu vừa breakout khỏi vùng tích lũy, volume đột biến",
+      "expected_output": "Danh sách mã breakout với phân loại MẠNH/YẾU, volume ratio, RS, cảnh báo breakout giả",
+      "difficulty": "hard",
+      "assertions": [
+        "Nhận diện yêu cầu lọc kỹ thuật nâng cao — breakout detection",
+        "Dịch NLP: 'breakout vùng tích lũy' → giá vượt đỉnh 20 phiên + volume > 2x TB",
+        "Phân loại sức mạnh breakout: MẠNH (đóng cửa ở 80% trên của phiên) vs YẾU",
+        "Hiển thị cột: mã, ngành, giá, breakout (MẠNH/YẾU), Vol/TB Vol, RS 60D",
+        "Cảnh báo breakout YẾU: 'cần xác nhận thêm 1-2 phiên, nếu giá quay lại dưới kháng cự → breakout giả'",
+        "Sort theo volume ratio giảm dần (smart sort cho breakout)",
+        "Có compact funnel"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "relative-strength-leader",
+      "prompt": "Cổ phiếu nào đang mạnh hơn VN-Index trong 3 tháng gần nhất?",
+      "expected_output": "Danh sách mã có RS > 1.0 vs VN-Index, phân loại mức RS, sort theo RS giảm dần",
+      "difficulty": "medium",
+      "assertions": [
+        "Dịch NLP: 'mạnh hơn VN-Index' → Relative Strength ratio > 1.0 trong 60 phiên",
+        "Tính RS ratio đúng: (1 + stock_return_60D) / (1 + vnindex_return_60D)",
+        "Phân loại RS: 🟢 > 1.2 (mạnh hơn nhiều), ⚪ 1.0-1.2 (mạnh hơn nhẹ), 🔴 < 1.0 (yếu hơn)",
+        "Sort theo RS ratio giảm dần",
+        "Hiển thị kèm fundamental cơ bản: P/E, ROE, volume",
+        "Gợi ý: 'Kết hợp RS cao + fundamental tốt = cổ phiếu dẫn đầu ngành (CANSLIM tiêu chí L)'"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "canslim-strategy",
+      "prompt": "Lọc cổ phiếu theo chiến lược CANSLIM",
+      "expected_output": "Kiểm tra Market direction (M) trước, sau đó lọc 7 tiêu chí CANSLIM, score theo số tiêu chí đạt",
+      "difficulty": "hard",
+      "assertions": [
+        "Bước ĐẦU TIÊN: kiểm tra Market direction (M) — VN-Index vs MA50",
+        "Nếu VN-Index < MA50 → cảnh báo RÕÀNG: 'Thị trường downtrend, CANSLIM khuyến nghị KHÔNG mua mới'",
+        "Lọc tuần tự 7 tiêu chí: C (EPS Q growth > 20%), A (EPS 3Y CAGR > 15%), N (price percentile > 80%), S (vol pattern), L (RS > 1.1), I (quỹ nắm giữ), M (market direction)",
+        "Hiển thị score dạng X/7 cho từng mã",
+        "Compact funnel cho thấy mỗi tiêu chí loại bao nhiêu mã",
+        "Nếu thiếu dữ liệu cho 1 số tiêu chí → dùng CANSLIM tối giản và ghi chú",
+        "Không khuyến nghị mua/bán"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "hybrid-strategy",
+      "prompt": "Lọc theo chiến lược Hybrid kết hợp giá trị, tăng trưởng và kỹ thuật",
+      "expected_output": "Lọc 3 tầng: Value → Growth → Technical Breakout, hiển thị composite score với trọng số 33/33/34",
+      "difficulty": "hard",
+      "assertions": [
+        "Nhận diện chiến lược Hybrid (Value 33% + Growth 33% + Technical Breakout 34%)",
+        "Tầng 1 Value: P/E < TB ngành hoặc < 18, P/B < 2.5, D/E < 1.5",
+        "Tầng 2 Growth: EPS growth > 10%, Rev growth > 5%, ROE > 12%",
+        "Tầng 3 Technical: Giá > MA50, RSI 45-70, có ít nhất 1 tín hiệu breakout (breakout 20D, golden cross, MACD cross, vượt MA200)",
+        "Hiển thị V-Score, G-Score, T-Score riêng + Hybrid composite score",
+        "Sort theo Hybrid score giảm dần",
+        "Compact funnel 3 tầng: Total → Value → Growth → Technical → Result",
+        "Có cột Historical Percentile (P/E percentile 5Y)",
+        "Giải thích tín hiệu kỹ thuật cụ thể cho từng mã"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "exclusion-filter",
+      "prompt": "Lọc cổ phiếu P/E < 15, ROE > 12% nhưng loại trừ ngành BĐS, ngân hàng và các mã nợ cao",
+      "expected_output": "Exclusion filter chạy TRƯỚC bộ lọc chính, funnel hiển thị rõ bước loại trừ, kết quả không chứa mã BĐS/NH/nợ cao",
+      "difficulty": "medium",
+      "assertions": [
+        "Nhận diện 3 loại exclusion: (1) exclude ngành BĐS, (2) exclude ngành Ngân hàng, (3) exclude D/E cao (> 2)",
+        "Exclusion chạy TRƯỚC bộ lọc fundamental (P/E, ROE)",
+        "Funnel hiển thị: Total → [Exclude BĐS, NH, D/E > 2] → X mã → [P/E < 15, ROE > 12%] → Y mã",
+        "Kết quả KHÔNG chứa bất kỳ mã ngân hàng hoặc BĐS nào",
+        "Kết quả KHÔNG chứa mã có D/E > 2",
+        "Ghi chú số mã bị loại trừ theo từng loại",
+        "Smart sort + benchmark ngành"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "macro-price-check",
+      "prompt": "Đầu tư công tăng mạnh 3 tháng nay, cổ phiếu xây dựng hạ tầng có còn hấp dẫn không?",
+      "expected_output": "List ngành hưởng lợi + Price Check bắt buộc: so sánh %Δ giá CP vs %Δ VN-Index để đánh giá catalyst đã phản ánh chưa",
+      "difficulty": "hard",
+      "assertions": [
+        "Nhận diện Nhóm D — Macro catalyst: đầu tư công tăng",
+        "Xác định chuỗi hưởng lợi: xây dựng/hạ tầng → thép/xi măng/VLXD → vận tải → ngân hàng (giải ngân)",
+        "Phân loại: hưởng lợi trực tiếp vs gián tiếp vs bất lợi",
+        "BẮT BUỘC chạy Price Check: so sánh %Δ giá CP vs %Δ VN-Index trong 3 tháng",
+        "Đánh giá Price Check: CP tăng > 2x VN-Index → 'Đã phản ánh phần lớn', CP < VN-Index → 'Chưa phản ánh'",
+        "Kết luận: mã nào còn cơ hội (chưa phản ánh) vs mã nào đã muộn (đã phản ánh)",
+        "Ghi chú rủi ro + gợi ý theo dõi số liệu giải ngân đầu tư công"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "historical-percentile",
+      "prompt": "So sánh P/E hiện tại của FPT, MWG, HPG với lịch sử 5 năm của chính nó, cho biết mã nào đang rẻ nhất so với lịch sử",
+      "expected_output": "Bảng historical percentile cho 3 mã, phân loại vùng giá trị (rẻ/hợp lý/đắt), sort theo percentile tăng dần",
+      "difficulty": "medium",
+      "assertions": [
+        "Tính historical percentile đúng: % số ngày trong 5 năm mà P/E thấp hơn P/E hiện tại",
+        "Phân loại: 📉 < 25% (rẻ so với LS), ⚪ 25-75% (hợp lý), 📈 > 75% (đắt so với LS)",
+        "Hiển thị: P/E hiện tại, P/E min 5Y, P/E max 5Y, P/E trung vị 5Y, percentile",
+        "Sort theo percentile tăng dần (rẻ nhất lên đầu)",
+        "Ghi chú context: 'Percentile thấp có thể do lý do xấu (ngành downtrend) hoặc tốt (thị trường chưa nhận ra). Cần kết hợp fundamental.'",
+        "Nếu không đủ 5 năm dữ liệu → ghi chú khoảng thời gian thực tế"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "combined-v5-features",
+      "prompt": "Tìm cổ phiếu tăng trưởng đang breakout, loại trừ mã penny và ngành BĐS, so sánh với lịch sử 5 năm",
+      "expected_output": "Kết hợp nhiều v5 features: exclusion + breakout + growth filter + historical percentile trong 1 flow",
+      "difficulty": "hard",
+      "assertions": [
+        "Exclusion chạy đầu tiên: loại mã penny (giá < 10,000 hoặc market cap < 500 tỷ) + loại ngành BĐS",
+        "Dịch NLP 'tăng trưởng' → EPS growth > 15%, Revenue growth > 10%",
+        "Kết hợp breakout detection: giá vượt đỉnh 20 phiên + volume đột biến",
+        "Thêm cột Historical Percentile (P/E percentile 5Y) cho mỗi mã trong kết quả",
+        "Compact funnel: Total → [Exclude penny, BĐS] → [Growth filter] → [Breakout] → Result",
+        "Sort theo composite (growth score + breakout strength + percentile thấp = tốt hơn)",
+        "Cảnh báo breakout YẾU nếu có",
+        "Gợi ý cross-skill: 'Phân tích sâu mã X' hoặc 'Định giá mã X'"
+      ]
+    }
+  ]
+}
