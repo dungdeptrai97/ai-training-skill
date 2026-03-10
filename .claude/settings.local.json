@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:skills.sh)",
+      "Bash(npx skills add https://github.com/anthropics/skills --skill skill-creator)",
+      "Bash(cmd.exe /c \"where npx\")",
+      "Bash(cmd.exe /c \"where npm\")",
+      "Bash(cmd.exe /c \"where node\")",
+      "Bash(git clone https://github.com/anthropics/skills.git /tmp/anthropic-skills)",
+      "Bash(node --version)",
+      "Bash(npm --version)",
+      "Bash(cmd.exe //c \"where node\")",
+      "Bash(export PATH=\"/c/Program Files/nodejs:$PATH\")",
+      "Bash(npm install -g @anthropic-ai/claude-code)",
+      "Bash(npm prefix -g)",
+      "Bash(export PATH=\"/c/Program Files/nodejs:/c/Users/Admin/AppData/Roaming/npm:$PATH\")",
+      "Bash(claude --version)",
+      "Bash(export PATH=\"/c/Program Files/nodejs:/c/Users/Admin/AppData/Roaming/npm:/c/Users/Admin/.local/bin:$PATH\")",
+      "Bash(claude plugin list)",
+      "Bash(node -e \"const fs = require\\(''fs''\\); const data = JSON.parse\\(fs.readFileSync\\(''evals.json'', ''utf8''\\)\\); console.log\\(''Total evals:'', data.evals.length\\); data.evals.forEach\\(e => console.log\\(''  #'' + e.id + '': '' + e.name + '' \\('' + e.difficulty + ''\\) - '' + e.assertions.length + '' assertions''\\)\\)\")"
+    ]
+  }
+}
