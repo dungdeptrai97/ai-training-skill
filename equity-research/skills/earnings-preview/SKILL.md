@@ -4,6 +4,26 @@ description: Build pre-earnings analysis with estimate models, scenario framewor
 
 ## Workflow
 
+### Step 0: Real-Time Commodity Price Check (if applicable)
+
+**🚨 MANDATORY when the company's earnings are materially affected by commodity prices** (input costs or selling prices — e.g., oil, gas, steel, coal, rubber, sugar, milk powder, fertilizer, rice, etc.)
+
+**Before building scenarios, check today's actual commodity prices:**
+
+1. **Priority 1 — MCP Servers (Simplize)**: Query Simplize MCP data connectors for real-time or latest available commodity prices. Use LSEG, FactSet, or S&P Global endpoints if configured.
+2. **Priority 2 — WebSearch**: If MCP data unavailable, search: "[commodity name] price today [date]" (e.g., "Brent crude oil price today 2026-03-16", "HRC steel price Vietnam March 2026")
+3. **Record & Compare**: Note the current price vs. the assumption used in consensus estimates. Flag if there is a significant divergence (>5%).
+
+**What to check by industry:**
+- **Oil & Gas** (GAS, PVD, PVS, PVT, BSR): Brent crude, WTI, Henry Hub gas, Singapore crack spread
+- **Steel** (HPG, NKG, HSG): HRC price, iron ore, coking coal
+- **Agriculture/Food** (VNM, DBC, HAG): Milk powder (GDT), corn, soybean meal, live hog price
+- **Rubber** (CSM, DRC, SRC): Natural rubber (TSR20, RSS3)
+- **Fertilizer** (DPM, DCM): Urea price, ammonia
+- **Power/Utilities** (NT2, POW): Coal price (Newcastle), gas price
+
+**Use this data to calibrate scenario assumptions** — e.g., if Brent is currently $62 but consensus assumes $75, the bear case becomes more likely.
+
 ### Step 1: Gather Context
 
 - Identify the company and reporting quarter

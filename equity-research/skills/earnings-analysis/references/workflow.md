@@ -250,6 +250,40 @@ Listen to or read earnings call transcript and note:
 
 ## Phase 2: Analysis (2-3 hours)
 
+### Step 4b: Pre-Analysis Checks (Edge Cases)
+
+Before diving into analysis, check for these situations and adjust approach:
+
+**Check 1 — Data Completeness:**
+- How many quarters of data are available? If <4 quarters (new IPO/listing), note: "Limited history — YoY comparisons not available." Use QoQ trends instead.
+- Are consensus estimates available? If not (under-covered stock), use management guidance or own estimates as baseline. State: "No consensus estimates available for this company."
+
+**Check 2 — Earnings Sign:**
+- Is the company profitable? If net income is negative:
+  - Report EPS as negative number
+  - P/E = **"N/M" (Not Meaningful)**
+  - Use alternative valuation: EV/Revenue, EV/EBITDA, P/Book
+  - Focus margin analysis on trajectory toward breakeven
+
+**Check 3 — Industry Framework:**
+- Banks/Financials: Replace "Revenue" with NII + Non-Interest Income. Key metrics: NIM, CIR, NPL ratio, LLR coverage, CASA ratio.
+- REITs/Real Estate: Flag revenue recognition timing. Key metrics: NLA, occupancy, rental yield, NAV.
+- Insurance: Key metrics: GWP, combined ratio, investment yield.
+- Airlines: Key metrics: RPK, ASK, load factor, yield, CASK/RASK.
+
+**Check 4 — Anomalous Period:**
+- Was this quarter impacted by crisis/one-time event (COVID, natural disaster, restructuring)?
+- If yes: flag prominently, separate core vs one-time items, suggest pre-crisis baseline for comparison.
+
+**Check 5 — Corporate Actions:**
+- Stock split/reverse split since last report? → Adjust ALL historical EPS for split ratio. Note: "Historical EPS adjusted for [X:Y] split effective [date]."
+- Financial restatement? → Use restated figures, note the restatement and reason.
+
+**Check 6 — Input Validation:**
+- Ticker exists and is valid? If not → inform user, do not proceed with fabricated data.
+- Quarter is valid (Q1-Q4, H1/H2, FY)? If "Q5" or invalid → ask clarification.
+- Requested period has earnings released? If future quarter → inform user, suggest latest available.
+
 ### Step 5: Beat/Miss Analysis
 
 For EACH key metric that beat or missed, explain:
@@ -501,6 +535,27 @@ Before publishing, verify:
 - [ ] Report published within 24-48 hours of earnings release
 - [ ] All data is from LATEST quarter
 - [ ] Consensus estimates are pre-earnings (not post-earnings)
+
+**Anti-Pattern Check:**
+- [ ] No hallucinated numbers — every figure traces to a cited source
+- [ ] No false precision — match source precision (if source says "38%", don't write "38.0000%")
+- [ ] No currency confusion — never mix VND/USD without explicit conversion and exchange rate
+- [ ] No period mismatch — YoY compares same quarter, peer comparison uses same period
+- [ ] No confident predictions — forward numbers framed as "estimate/expect/guide", never "will be"
+- [ ] No survivorship bias — peer groups note any delisted/acquired/bankrupt companies during comparison period
+
+**Edge Case Check (if applicable):**
+- [ ] If negative earnings: P/E shown as "N/M", alternative valuation used
+- [ ] If limited history (<4 quarters): limitation noted, no fabricated historical data
+- [ ] If stock split occurred: all historical EPS adjusted, split noted
+- [ ] If restated financials: restated figures used, restatement noted
+- [ ] If anomalous period: flagged prominently, one-time items separated
+- [ ] If bank/REIT/insurance: industry-specific metrics used correctly
+
+**Compliance:**
+- [ ] No insider information processed
+- [ ] Disclaimer included: "This analysis is for informational purposes only and does not constitute investment advice."
+- [ ] Forward-looking statements use "estimate/expect/consensus" language, not definitive predictions
 
 ### Step 16: Deliver Report
 

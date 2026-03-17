@@ -8,6 +8,26 @@ description: Create comprehensive industry and sector landscape reports covering
 
 ## Workflow
 
+### Step 0: Real-Time Commodity / Input Price Check (if applicable)
+
+**🚨 MANDATORY when the sector is materially driven by commodity prices** (e.g., oil & gas, steel, mining, agriculture, chemicals, power/utilities, rubber, fertilizer, food & beverage)
+
+**Before writing the sector overview, check today's actual commodity prices:**
+
+1. **Priority 1 — MCP Servers (Simplize)**: Query Simplize MCP data connectors for real-time or latest available commodity prices. Use LSEG, FactSet, or S&P Global endpoints if configured.
+2. **Priority 2 — WebSearch**: If MCP data unavailable, search: "[commodity name] price today [date]" (e.g., "Brent crude oil price today 2026-03-16", "HRC steel price Vietnam March 2026")
+3. **Record**: Note the current price, YTD change, and 1-year trend.
+
+**Sector-commodity mapping:**
+- **Oil & Gas**: Brent crude, WTI, Henry Hub gas, Singapore crack spread
+- **Steel/Metals**: HRC price, iron ore, coking coal, scrap steel
+- **Agriculture/Food**: Milk powder (GDT), corn, soybean meal, live hog, rice, sugar
+- **Rubber**: Natural rubber (TSR20, RSS3)
+- **Fertilizer/Chemicals**: Urea, ammonia, phosphorus, sulphuric acid
+- **Power/Utilities**: Coal (Newcastle), gas price, electricity pool price
+
+**Include a "Commodity Environment" section** early in the report showing current prices, historical context, and how this shapes sector profitability.
+
 ### Step 1: Define Scope
 
 - **Sector / subsector**: What industry and how narrowly defined?

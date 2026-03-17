@@ -17,7 +17,12 @@
       "Bash(claude --version)",
       "Bash(export PATH=\"/c/Program Files/nodejs:/c/Users/Admin/AppData/Roaming/npm:/c/Users/Admin/.local/bin:$PATH\")",
       "Bash(claude plugin list)",
-      "Bash(node -e \"const fs = require\\(''fs''\\); const data = JSON.parse\\(fs.readFileSync\\(''evals.json'', ''utf8''\\)\\); console.log\\(''Total evals:'', data.evals.length\\); data.evals.forEach\\(e => console.log\\(''  #'' + e.id + '': '' + e.name + '' \\('' + e.difficulty + ''\\) - '' + e.assertions.length + '' assertions''\\)\\)\")"
+      "Bash(node -e \"const fs = require\\(''fs''\\); const data = JSON.parse\\(fs.readFileSync\\(''evals.json'', ''utf8''\\)\\); console.log\\(''Total evals:'', data.evals.length\\); data.evals.forEach\\(e => console.log\\(''  #'' + e.id + '': '' + e.name + '' \\('' + e.difficulty + ''\\) - '' + e.assertions.length + '' assertions''\\)\\)\")",
+      "Read(//c/Users/Admin/Downloads/**)",
+      "WebFetch(domain:docs.google.com)",
+      "WebFetch(domain:doc-0o-5g-sheets.googleusercontent.com)",
+      "WebSearch",
+      "Bash(find /c/Users/Admin/ai-skill -name .mcp.json -o -name *mcp* -type f)"
     ]
   }
 }
